@@ -1,0 +1,27 @@
+nav {
+    grid-area: n;
+    background-color: #292828;
+}
+
+.navItems{
+    margin-top: 20px;
+}
+
+.navItem{
+    display: flex;
+    padding: 20px 0 0 30px;
+
+}
+
+.navItem a{
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 35px;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.navItem a:hover{
+    color: #edf035;
+}
+

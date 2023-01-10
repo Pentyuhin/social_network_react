@@ -1,0 +1,31 @@
+.pageUser{
+    color: #292828;
+    font-size: 1.5rem;
+}
+
+
+.usersContainer{
+    display: flex;
+}
+
+.userContent{
+    gap: 20px;
+}
+.userContent img{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+
+.userContent button{
+    width: 130px;
+    height: 30px;
+    background-color: #3f87a6;
+}
+
+.selectedPage{
+    font-size: 2rem;
+    color: #f69d3c;
+    font-weight: bold;
+    cursor: pointer;
+}
