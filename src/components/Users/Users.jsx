@@ -2,7 +2,10 @@ import React from "react";
 import classes from './Users.module.css'
 import userPhoto from '../../img/manky.jpeg'
 import {NavLink} from "react-router-dom";
-import {userAPI} from "../../api/api";
+
+
+
+
 
 
 let Users = (props) => {
@@ -35,27 +38,11 @@ let Users = (props) => {
                                 <div>
                                     {
                                         u.followed
-                                            ? <button onClick={ () => {
-
-                                                userAPI.unfollowUser(u)
-                                                    .then(data => {
-                                                        debugger;
-                                                        if(data.resultCode === 0) {
-                                                            props.fromSubscribe(u.id);
-                                                        }
-                                                });
-
+                                            ? <button disabled={props.followingInProgress.some(id => id === u.id)} onClick={ () => {
+                                                props.unfollowUser(u.id);
                                             }}>From Subscribe</button>
-                                            : <button onClick={ () => {
-
-                                                userAPI.followUser(u)
-                                                    .then(data => {
-                                                        debugger;
-                                                        if(data.resultCode === 0) {
-                                                            props.subscribe(u.id);
-                                                        }
-                                                    });
-
+                                            : <button disabled={props.followingInProgress.some(id => id === u.id)} onClick={ () => {
+                                                props.followUser(u.id)
                                             } }>Subscribe</button>
                                     }
                                 </div>

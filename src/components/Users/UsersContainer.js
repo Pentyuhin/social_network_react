@@ -2,39 +2,29 @@ import {connect} from "react-redux";
 import Users from "./Users";
 import {
     fromSubscribe,
-    setCurrentPage, setIsFetcheng,
-    setUsers,
-    setTotalUsersCount,
-    subscribe
+    setCurrentPage,
+    subscribe, toggleFollowingPogreess, getUsersThunkCreator,  followUser, unfollowUser
 } from "../../redux/usersReducer";
 import React from "react";
 import Preloader from "../common/Preloader/Preloader";
-import {userAPI} from "../../api/api";
+import {withAuthRedirect} from "../../hoc/AuthRedirect";
+import {compose} from "redux";
+
 
 
 
 class UsersContainer extends React.Component{
 
     componentDidMount() {
-        this.props.setIsFetcheng(true);
 
-        userAPI.getUsers(this.props.currentPage, this.props.pageSize)
-            .then(data => {
-                this.props.setIsFetcheng(false);
-                this.props.setUsers(data.items);
-                this.props.setTotalUsersCount(data.totalCount);
-            });
+        this.props.getUsersThunkCreator(this.props.currentPage, this.props.pageSize);
+
     }
 
     onPageChanged = (pageNumber) => {
-        this.props.setIsFetcheng(true);
-        this.props.setCurrentPage(pageNumber)
 
-        userAPI.getUsers(pageNumber, this.props.pageSize)
-            .then(data => {
-                this.props.setIsFetcheng(false);
-                this.props.setUsers(data.items);
-            });
+        this.props.getUsersThunkCreator(pageNumber, this.props.pageSize);
+
     }
 
 
@@ -48,6 +38,9 @@ class UsersContainer extends React.Component{
                    pageSize={this.props.pageSize}
                    subscribe={this.props.subscribe}
                    fromSubscribe={this.props.fromSubscribe}
+                   followingInProgress={this.props.followingInProgress}
+                   followUser={this.props.followUser}
+                   unfollowUser={this.props.unfollowUser}
 
             />
         </>
@@ -61,6 +54,8 @@ const mapStateToProps = (state) => {
         totalUsersCount: state.pageUsers.totalUsersCount,
         currentPage: state.pageUsers.currentPage,
         isFetcheng: state.pageUsers.isFetcheng,
+        followingInProgress: state.pageUsers.followingInProgress,
+        isAuth: state.auth.isAuth,
     }
 }
 
@@ -88,13 +83,26 @@ const mapStateToProps = (state) => {
 // }
 
 
-export default connect(mapStateToProps, {
-    subscribe,
-    fromSubscribe,
-    setUsers,
-    setCurrentPage,
-    setTotalUsersCount,
-    setIsFetcheng,
-})(UsersContainer);
+// export default connect(mapStateToProps, {
+//     subscribe,
+//     fromSubscribe,
+//     setCurrentPage,
+//     toggleFollowingPogreess,
+//     getUsersThunkCreator,
+//     unfollowUser,
+//     followUser,
+// })(AuthRedirectComponent);
 
 
+export default compose(
+    withAuthRedirect,
+    connect(mapStateToProps, {
+        subscribe,
+        fromSubscribe,
+        setCurrentPage,
+        toggleFollowingPogreess,
+        getUsersThunkCreator,
+        unfollowUser,
+        followUser,
+    })
+)(UsersContainer);
