@@ -12,6 +12,7 @@ import MessagesContainer from "./components/Messages/MessagesContainer";
 import UsersContainer from "./components/Users/UsersContainer";
 import ProfilesContainer from "./components/Profiles/ProfilesContainer";
 import HeaderContainer from "./components/Header/HeaderContainer";
+import Login from "./components/Login/Login";
 
 
 function App(props) {
@@ -29,6 +30,8 @@ function App(props) {
                             <Route path="/news" element={<News/>}/>
                             <Route path="/settings" element={<Settings/>}/>
                             <Route path="/users" element={<UsersContainer/>}/>
+                            <Route path="/login" element={<Login/>}/>
+
                         </Routes>
                     </div>
                     <Footer/>

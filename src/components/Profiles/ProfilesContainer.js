@@ -1,9 +1,11 @@
 import React from "react";
-import axios from "axios";
 import Profile from "./Profiles";
 import {connect} from "react-redux";
-import {setUserProfile} from "../../redux/profileReducer";
+import {getUserProfile} from "../../redux/profileReducer";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {withAuthRedirect} from "../../hoc/AuthRedirect";
+import {compose} from "redux";
+
 
 
 
@@ -23,13 +25,9 @@ function withRouter(Component){
 class ProfilesContainer extends React.Component{
 
     componentDidMount() {
-        debugger;
         let userId = this.props.router.params.userId;
-        debugger;
-        axios.get(`https://social-network.samuraijs.com/api/1.0/profile/` + userId)
-            .then(response => {
-                this.props.setUserProfile(response.data);
-            });
+
+        this.props.getUserProfile(userId);
     }
 
 
@@ -44,15 +42,13 @@ class ProfilesContainer extends React.Component{
 
 
 let mapStateToProps = (state) => ({
-    profile: state.pageProfile.profile
+    profile: state.pageProfile.profile,
 });
 
 
+export default compose(
+    connect(mapStateToProps, {getUserProfile}),
+    withAuthRedirect,
+    withRouter
+)(ProfilesContainer);
 
-
-let WithUrlDataContainerComponent = withRouter(ProfilesContainer);
-
-
-export default connect(mapStateToProps, {
-    setUserProfile
-}) (WithUrlDataContainerComponent);

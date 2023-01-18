@@ -1,27 +1,9 @@
-import React from "react";
+
 import {addMessageActionCreate, upDateNewMessageTextActionCreate} from "../../redux/messageReducer";
 import Messages from "./Messages";
 import {connect} from "react-redux";
-
-
-
-//  function MessagesContainer(props) {
-//     debugger
-//      let addNewMess = () => {
-//          props.dispatch(addMessageActionCreate())
-//      };
-//
-//      let onMessChange = (text) => {
-//          props.dispatch(upDateNewMessageTextActionCreate(text));
-//      }
-//
-//     return (
-//       <Messages addNewMess={addNewMess}
-//                 upDateNewMessageText={onMessChange}
-//                 newMessText={props.state.pageMessage.newMessText}
-//                 pageMessage={props.state.pageMessage}/>
-//     )
-// }
+import {withAuthRedirect} from "../../hoc/AuthRedirect";
+import {compose} from "redux";
 
 
 const mapStateToProps = (state) => {
@@ -33,7 +15,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        addNewMess: () =>{
+        addNewMess: () => {
             dispatch(addMessageActionCreate());
         },
         upDateNewMessageText: (text) => {
@@ -44,7 +26,7 @@ const mapDispatchToProps = (dispatch) => {
 
 
 
-const MessagesContainer = connect(mapStateToProps, mapDispatchToProps)(Messages);
-
-
-export default MessagesContainer;
+export default compose(
+    connect(mapStateToProps, mapDispatchToProps),
+    withAuthRedirect,
+)(Messages);

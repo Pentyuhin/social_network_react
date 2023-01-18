@@ -2,37 +2,29 @@ import {connect} from "react-redux";
 import Users from "./Users";
 import {
     fromSubscribe,
-    setCurrentPage, setIsFetcheng,
-    setUsers,
-    setTotalUsersCount,
-    subscribe
+    setCurrentPage,
+    subscribe, toggleFollowingPogreess, getUsersThunkCreator,  followUser, unfollowUser
 } from "../../redux/usersReducer";
 import React from "react";
-import axios from "axios";
 import Preloader from "../common/Preloader/Preloader";
+import {withAuthRedirect} from "../../hoc/AuthRedirect";
+import {compose} from "redux";
+
 
 
 
 class UsersContainer extends React.Component{
 
     componentDidMount() {
-        this.props.setIsFetcheng(true);
-        axios.get(`https://social-network.samuraijs.com/api/1.0/users?page=${this.props.currentPage}&count=${this.props.pageSize}`)
-            .then(response => {
-                this.props.setIsFetcheng(false);
-                this.props.setUsers(response.data.items);
-                this.props.setTotalUsersCount(response.data.totalCount);
-            });
+
+        this.props.getUsersThunkCreator(this.props.currentPage, this.props.pageSize);
+
     }
 
     onPageChanged = (pageNumber) => {
-        this.props.setIsFetcheng(true);
-        this.props.setCurrentPage(pageNumber)
-        axios.get(`https://social-network.samuraijs.com/api/1.0/users?page=${pageNumber}&count=${this.props.pageSize}`)
-            .then(response => {
-                this.props.setIsFetcheng(false);
-                this.props.setUsers(response.data.items);
-            });
+
+        this.props.getUsersThunkCreator(pageNumber, this.props.pageSize);
+
     }
 
 
@@ -46,6 +38,9 @@ class UsersContainer extends React.Component{
                    pageSize={this.props.pageSize}
                    subscribe={this.props.subscribe}
                    fromSubscribe={this.props.fromSubscribe}
+                   followingInProgress={this.props.followingInProgress}
+                   followUser={this.props.followUser}
+                   unfollowUser={this.props.unfollowUser}
 
             />
         </>
@@ -59,6 +54,8 @@ const mapStateToProps = (state) => {
         totalUsersCount: state.pageUsers.totalUsersCount,
         currentPage: state.pageUsers.currentPage,
         isFetcheng: state.pageUsers.isFetcheng,
+        followingInProgress: state.pageUsers.followingInProgress,
+        isAuth: state.auth.isAuth,
     }
 }
 
@@ -86,13 +83,26 @@ const mapStateToProps = (state) => {
 // }
 
 
-export default connect(mapStateToProps, {
-    subscribe,
-    fromSubscribe,
-    setUsers,
-    setCurrentPage,
-    setTotalUsersCount,
-    setIsFetcheng,
-})(UsersContainer);
+// export default connect(mapStateToProps, {
+//     subscribe,
+//     fromSubscribe,
+//     setCurrentPage,
+//     toggleFollowingPogreess,
+//     getUsersThunkCreator,
+//     unfollowUser,
+//     followUser,
+// })(AuthRedirectComponent);
 
 
+export default compose(
+    withAuthRedirect,
+    connect(mapStateToProps, {
+        subscribe,
+        fromSubscribe,
+        setCurrentPage,
+        toggleFollowingPogreess,
+        getUsersThunkCreator,
+        unfollowUser,
+        followUser,
+    })
+)(UsersContainer);
