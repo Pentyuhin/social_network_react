@@ -4,13 +4,16 @@ import Preloader from "../../common/Preloader/Preloader";
 import ProfileStatus from "../ProfileInfo/ProfileInfo";
 
 
+
+
 function InfoPerson(props){
+    debugger;
     return  <div className={classes.infoBlok}>
         <div className={classes.inforAva}>
             <img src={!props.profile.photos.small ? 'https://maxblogs.ru/images/926.jpg' :  props.profile.photos.small} alt="Avotar"/>
         </div>
         <div className={classes.profileContant}>
-            <div>STATUS: <ProfileStatus textStatus={'Hi My friends, I\'Here'}/></div>
+            <div>STATUS: <ProfileStatus status={props.status} updateUserStatus={props.updateUserStatus} /></div>
             <div className={classes.profileInform}>Name: {props.profile.fullName}</div>
             <div className={classes.profileInform}>Job: {props.profile.lookingForAJobDescription}</div>
             <div className={classes.profileInform}>Contacts: {props.profile.contacts.github}</div>
@@ -21,10 +24,11 @@ function InfoPerson(props){
 }
 
 function MyProfile(props) {
+    debugger;
     if (!props.profile){
         return <Preloader/>
     }
-    return <InfoPerson profile={props.profile}/>
+    return <InfoPerson profile={props.profile} status={props.status} updateUserStatus={props.updateUserStatus}/>
 
 }
 

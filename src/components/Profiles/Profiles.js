@@ -5,11 +5,12 @@ import PostsContainer from "./Posts/PostsContainer";
 
 
 
-function Profile(props){
 
+function Profile(props){
+    debugger;
     return (
             <div className={classes.profile}>
-                <MyProfile profile={props.profile}/>
+                <MyProfile profile={props.profile} status={props.status} updateUserStatus={props.updateUserStatus}/>
                 <PostsContainer/>
             </div>
 

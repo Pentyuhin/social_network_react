@@ -1,5 +1,8 @@
 import React from "react";
 import classes from "./Posts.module.css"
+import {Field, reduxForm} from "redux-form";
+import {maxLengthCreator, required} from "../../../utils/validators/validators";
+import {Textarea} from "../../common/FormsControls/FormsControls";
 
 
 
@@ -21,33 +24,39 @@ function Post(props) {
 
 function Posts(props){
 
-    let newPostElement = React.createRef();
 
-    let addNewPost = () => {
-        props.addNewPost();
-    };
-
-    let onPostChange = () => {
-        let text = newPostElement.current.value;
-        props.updateNewPostText(text);
-    };
+    let addNewPostText = (values) => {
+        props.addNewPost(values.textMessagePost)
+    }
 
 
     return (
         <section className={classes.container}>
 
-            <div className={classes.formSendPost}>
-                <form className={classes.formPost} action="#" name="post-form">
-                    <label>Tell us your story:</label>
-                    <textarea onChange={onPostChange} ref={newPostElement} value={props.newPostText}/>
-                    <button onClick={addNewPost} className={classes.btn}>ADD POST</button>
-                </form>
-            </div>
+            <PostReduxForm onSubmit={addNewPostText}/>
 
             <Post  postData={props.postData}/>
 
         </section>
     )
 }
+
+const maxLength30 = maxLengthCreator(30);
+
+const PostsForm = (props) => {
+    return (
+        <div className={classes.formSendPost}>
+            <form onSubmit={props.handleSubmit} className={classes.formPost}>
+                <label>Tell us your story:</label>
+                <Field validate={[required, maxLength30]} placeholder={'Ender text message....'} component={Textarea} name={'textMessagePost'}/>
+                <button className={classes.btn}>ADD POST</button>
+            </form>
+        </div>
+    )
+}
+
+const PostReduxForm = reduxForm ({
+    form: 'posts'
+})(PostsForm)
 
 export default Posts

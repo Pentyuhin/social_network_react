@@ -1,5 +1,5 @@
 
-import {addMessageActionCreate, upDateNewMessageTextActionCreate} from "../../redux/messageReducer";
+import {addMessageActionCreate} from "../../redux/messageReducer";
 import Messages from "./Messages";
 import {connect} from "react-redux";
 import {withAuthRedirect} from "../../hoc/AuthRedirect";
@@ -15,12 +15,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        addNewMess: () => {
-            dispatch(addMessageActionCreate());
+        addNewMess: (textMess) => {
+            dispatch(addMessageActionCreate(textMess));
         },
-        upDateNewMessageText: (text) => {
-            dispatch(upDateNewMessageTextActionCreate(text));
-        }
     }
 }
 
