@@ -7,7 +7,6 @@ import ProfileStatus from "../ProfileInfo/ProfileInfo";
 
 
 function InfoPerson(props){
-    debugger;
     return  <div className={classes.infoBlok}>
         <div className={classes.inforAva}>
             <img src={!props.profile.photos.small ? 'https://maxblogs.ru/images/926.jpg' :  props.profile.photos.small} alt="Avotar"/>

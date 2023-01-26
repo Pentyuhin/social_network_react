@@ -1,4 +1,5 @@
 import {userAPI} from "../api/api";
+import {getIsAuth} from "./users-selectors";
 
 const SUBSCRIBE = 'SUBSCRIBE';
 const FROM_SUBSCRIBE = 'FROM_SUBSCRIBE';
@@ -129,12 +130,13 @@ export const toggleFollowingPogreess = (isFetcheng, userId) => {
 }
 
 
-export const getUsersThunkCreator = (currentPage, pageSize) => {
+export const getUsersThunkCreator = (page, pageSize) => {
 
     return (dispatch) => {
         dispatch(setIsFetcheng(true));
+        dispatch(setCurrentPage(page))
 
-        userAPI.getUsers(currentPage, pageSize)
+        userAPI.getUsers(getIsAuth, pageSize)
             .then(data => {
                 dispatch(setIsFetcheng(false));
                 dispatch(setUsers(data.items));
