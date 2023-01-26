@@ -9,3 +9,11 @@
     color: red;
     font-size: 20px;
 }
+
+.formSummaryError {
+    border: 0.5rem solid red;
+    padding-top: 5px;
+}
+.formSummaryError span {
+    color: red;
+}

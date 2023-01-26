@@ -9,6 +9,14 @@ import React from "react";
 import Preloader from "../common/Preloader/Preloader";
 import {withAuthRedirect} from "../../hoc/AuthRedirect";
 import {compose} from "redux";
+import {
+    getCurrentPage,
+    getFollowingInProgress, getIsAuth,
+    getIsFetcheng,
+    getPageSize,
+    getTotalUsers,
+    getUsers
+} from "../../redux/users-selectors";
 
 
 
@@ -47,15 +55,28 @@ class UsersContainer extends React.Component{
     }
 }
 
+// const mapStateToProps = (state) => {
+//     return {
+//         users: state.pageUsers.users,
+//         pageSize: state.pageUsers.pageSize,
+//         totalUsersCount: state.pageUsers.totalUsersCount,
+//         currentPage: state.pageUsers.currentPage,
+//         isFetcheng: state.pageUsers.isFetcheng,
+//         followingInProgress: state.pageUsers.followingInProgress,
+//         isAuth: state.auth.isAuth,
+//     }
+// }
+
+
 const mapStateToProps = (state) => {
     return {
-        users: state.pageUsers.users,
-        pageSize: state.pageUsers.pageSize,
-        totalUsersCount: state.pageUsers.totalUsersCount,
-        currentPage: state.pageUsers.currentPage,
-        isFetcheng: state.pageUsers.isFetcheng,
-        followingInProgress: state.pageUsers.followingInProgress,
-        isAuth: state.auth.isAuth,
+        users: getUsers(state),
+        pageSize: getPageSize(state),
+        totalUsersCount: getTotalUsers(state),
+        currentPage: getCurrentPage(state),
+        isFetcheng: getIsFetcheng(state),
+        followingInProgress: getFollowingInProgress(state),
+        isAuth: getIsAuth(state),
     }
 }
 

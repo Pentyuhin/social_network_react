@@ -8,29 +8,15 @@ import {compose} from "redux";
 
 
 
-
-function withRouter(Component){
-    function ComponentWithRouterProp(props) {
-        let location = useLocation();
-        let navigate = useNavigate();
-        let params = useParams();
-        return (
-            <Component {...props} router={{location, navigate, params}}/>
-        )
-    }
-    return ComponentWithRouterProp;
-}
-
-
 class ProfilesContainer extends React.Component{
-
     componentDidMount() {
         let userId = this.props.router.params.userId;
-
         if(!userId){
-            userId = 1049;
+            userId = this.props.authorizedUserId;
+            if(!userId){
+                return this.props.history.push('/login');
+            }
         }
-
         this.props.getUserProfile(userId);
         this.props.getUserStatus(userId);
     }
@@ -44,19 +30,32 @@ class ProfilesContainer extends React.Component{
     }
 
 
-
     render() {
         return (
-            <Profile {...this.props} profile={this.props.profile} status={this.props.status} updateUserStatus={this.props.updateUserStatus}/>
+            <Profile {...this.props} updateUserStatus={this.props.updateUserStatus}/>
         )
 
     }
+}
+
+export function withRouter(Component){
+    function ComponentWithRouterProp(props) {
+        let location = useLocation();
+        let navigate = useNavigate();
+        let params = useParams();
+        return (
+            <Component {...props} router={{location, navigate, params}}/>
+        )
+    }
+    return ComponentWithRouterProp;
 }
 
 
 let mapStateToProps = (state) => ({
     profile: state.pageProfile.profile,
     status: state.pageProfile.status,
+    authorizedUserId: state.auth.userId,
+    isAuth: state.auth.isAuth
 });
 
 
