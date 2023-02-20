@@ -36,15 +36,17 @@ class App extends React.Component {
                         <HeaderContainer/>
                         <NavBar/>
                         <div className='wrapper-container-profile'>
-                            <Routes>
-                                {/*<Route path="/:userId" render={ () => <ProfilesContainer/>}/>*/}
-                                <Route path="/:userId" element={<ProfilesContainer/>}/>
-                                <Route path="/messages" element={<MessagesContainer/>}/>
-                                <Route path="/news" element={<News/>}/>
-                                <Route path="/settings" element={<Settings/>}/>
-                                <Route path="/users" element={<UsersContainer/>}/>
-                                <Route path="/login" element={<Login/>}/>
-                            </Routes>
+                            {/*<Switch>*/}
+                                <Routes>
+                                    {/*<Route path="/:userId" render={ () => <ProfilesContainer/>}/>*/}
+                                    <Route path="/:userId?" element={<ProfilesContainer/>}/>
+                                    <Route path="/messages" element={<MessagesContainer/>}/>
+                                    <Route path="/news" element={<News/>}/>
+                                    <Route path="/settings" element={<Settings/>}/>
+                                    <Route path="/users" element={<UsersContainer/>}/>
+                                    <Route path="/login" element={<Login/>}/>
+                                </Routes>
+                            {/*</Switch>*/}
                         </div>
                         <Footer/>
                     </div>

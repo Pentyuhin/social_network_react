@@ -1,17 +1,17 @@
 import {userAPI} from "../api/api";
-import {getIsAuth} from "./users-selectors";
+import {updateObjectInArray} from "../utils/object-helpers";
 
-const SUBSCRIBE = 'SUBSCRIBE';
-const FROM_SUBSCRIBE = 'FROM_SUBSCRIBE';
-const SET_USERS = 'SET_USERS';
-const SET_CURRENT_PAGE = 'SET_CURRENT_PAGE';
-const SET_TOTAL_USERS_COUNT = 'SET_TOTAL_USERS_COUNT';
-const SET_IS_FETCHING = 'SET_IS_FETCHING';
-const TOGGLE_IS_FOLLOWING_PROGRESS = 'TOGGLE_IS_FOLLOWING_PROGRESS';
+const SUBSCRIBE = 'proj-react/users/SUBSCRIBE';
+const FROM_SUBSCRIBE = 'proj-react/users/FROM_SUBSCRIBE';
+const SET_USERS = 'proj-react/users/SET_USERS';
+const SET_CURRENT_PAGE = 'proj-react/users/SET_CURRENT_PAGE';
+const SET_TOTAL_USERS_COUNT = 'proj-react/users/SET_TOTAL_USERS_COUNT';
+const SET_IS_FETCHING = 'proj-react/users/SET_IS_FETCHING';
+const TOGGLE_IS_FOLLOWING_PROGRESS = 'proj-react/users/TOGGLE_IS_FOLLOWING_PROGRESS';
 
 let initialState = {
     users: [],
-    pageSize: 5,
+    pageSize: 10,
     totalUsersCount: 0,
     currentPage: 1,
     isFetcheng: true,
@@ -19,29 +19,18 @@ let initialState = {
 }
 
 
-
 const usersReducer = (state = initialState, action) => {
     switch (action.type) {
         case SUBSCRIBE:
             return {
                 ...state,
-                users: state.users.map( u => {
-                    if(u.id === action.userId){
-                        return {...u, followed: true}
-                    }
-                    return u;
-                })
+                users: updateObjectInArray(state.users, action.userId, 'id', {followed: true})
             }
 
         case FROM_SUBSCRIBE:
             return {
                 ...state,
-                users: state.users.map( u => {
-                    if(u.id === action.userId){
-                        return {...u, followed: false}
-                    }
-                    return u;
-                })
+                users: updateObjectInArray(state.users, action.userId, 'id', {followed: false})
             }
 
         case SET_USERS:
@@ -79,7 +68,7 @@ const usersReducer = (state = initialState, action) => {
 }
 
 
-export const subscribe= (userId) => {
+export const subscribe = (userId) => {
     return {
         type: SUBSCRIBE,
         userId
@@ -130,55 +119,46 @@ export const toggleFollowingPogreess = (isFetcheng, userId) => {
 }
 
 
-export const getUsersThunkCreator = (page, pageSize) => {
+export const getUsersThunkCreator = (currentPage, pageSize) => {
 
-    return (dispatch) => {
+    return async (dispatch) => {
         dispatch(setIsFetcheng(true));
-        dispatch(setCurrentPage(page))
+        dispatch(setCurrentPage(currentPage));
 
-        userAPI.getUsers(getIsAuth, pageSize)
-            .then(data => {
-                dispatch(setIsFetcheng(false));
-                dispatch(setUsers(data.items));
-                dispatch(setTotalUsersCount(data.totalCount));
+        const data = await userAPI.getUsers(currentPage, pageSize)
 
-            });
-
+        dispatch(setIsFetcheng(false));
+        dispatch(setUsers(data.items));
+        dispatch(setTotalUsersCount(data.totalCount));
     }
+
+}
+
+const followUnfollowFlow = async (dispatch, userId, apiMethod, actionCreator) => {
+
+        dispatch(toggleFollowingPogreess(true, userId));
+        const data = await apiMethod(userId)
+
+        if (data.resultCode === 0) {
+            dispatch(actionCreator(userId));
+        }
+        dispatch(toggleFollowingPogreess(false, userId));
 
 }
 
 
 export const followUser = (userId) => {
 
-    return (dispatch) => {
-
-        dispatch(toggleFollowingPogreess(true, userId));
-        userAPI.followUser(userId)
-            .then(data => {
-                if(data.resultCode === 0) {
-                    dispatch(subscribe(userId));
-                }
-                dispatch(toggleFollowingPogreess(false, userId));
-            });
-
+    return async (dispatch) => {
+        followUnfollowFlow(dispatch, userId, userAPI.followUser.bind(userAPI), subscribe);
     }
 
 }
 
 export const unfollowUser = (userId) => {
 
-    return (dispatch) => {
-
-        dispatch(toggleFollowingPogreess(true, userId));
-        userAPI.unfollowUser(userId)
-            .then(data => {
-                if(data.resultCode === 0) {
-                    dispatch(fromSubscribe(userId));
-                }
-                dispatch(toggleFollowingPogreess(false, userId));
-            });
-
+    return async (dispatch) => {
+        followUnfollowFlow(dispatch, userId, userAPI.unfollowUser.bind(userAPI), fromSubscribe);
     }
 
 }

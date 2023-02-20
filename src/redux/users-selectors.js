@@ -1,7 +1,7 @@
 
 
 
-export const getUsers = (state) => {
+export const getUsersSelector = (state) => {
   return state.pageUsers.users;
 }
 
@@ -25,6 +25,6 @@ export const getFollowingInProgress = (state) => {
     return state.pageUsers.followingInProgress;
 }
 
-export const getIsAuth = (state) => {
+export const getIsAuthSelector = (state) => {
   return state.auth.isAuth;
 }
