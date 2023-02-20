@@ -23,16 +23,16 @@
 
 
 
-.infoBlok{
+.infoBlock{
     display: flex;
     padding: 40px 30px 0;
 }
 
-.inforAva{
+.infoAva{
     padding-right: 25px;
 }
 
-.inforAva img{
+.infoAva img{
     display: block;
     width: 150px;
     height: 150px;
@@ -52,4 +52,26 @@
 
 .profileInform:not(:last-child){
     padding-bottom: 10px;
+}
+
+.contacts{
+    padding-left: 15px;
+}
+
+.formControl.error input,
+.formControl.error textarea{
+    border: 0.5rem solid red;
+}
+
+.formControl.error span{
+    color: red;
+    font-size: 20px;
+}
+
+.formSummaryError {
+    border: 0.5rem solid red;
+    padding-top: 5px;
+}
+.formSummaryError span {
+    color: red;
 }

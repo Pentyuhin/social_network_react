@@ -7,10 +7,16 @@ import PostsContainer from "./Posts/PostsContainer";
 
 
 function Profile(props){
-    debugger;
+
     return (
             <div className={classes.profile}>
-                <MyProfile profile={props.profile} status={props.status} updateUserStatus={props.updateUserStatus}/>
+                <MyProfile savePhoto={props.savePhoto}
+                           profile={props.profile}
+                           status={props.status}
+                           updateUserStatus={props.updateUserStatus}
+                           isOwner={props.isOwner}
+                           saveProfile={props.saveProfile}
+                    />
                 <PostsContainer/>
             </div>
 

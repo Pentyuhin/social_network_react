@@ -1,9 +1,11 @@
 import {profileAPI} from "../api/api";
+import {stopSubmit} from "redux-form";
 
-const ADD_POST = 'ADD-POST';
+const ADD_POST = 'proj-react/profile/ADD-POST';
 
-const SET_USER_PROFILE = 'SET_USER_PROFILE';
-const SET_USER_STATUS = 'SET_USER_STATUS';
+const SET_USER_PROFILE = 'proj-react/profile/SET_USER_PROFILE';
+const SET_USER_STATUS = 'proj-react/profile/SET_USER_STATUS';
+const SAVE_PHOTO_SUCCESS = 'proj-react/profile/SAVE_PHOTO_SUCCESS';
 
 let initialState = {
     postData: [
@@ -45,6 +47,13 @@ const profileReducer = (state = initialState, action) => {
                 ...state,
                 status: action.status
             };
+
+        case SAVE_PHOTO_SUCCESS:
+            return {
+                ...state,
+                profile: {...state.profile, photos: action.photos}
+            };
+
         default:
             return state;
     }
@@ -71,35 +80,64 @@ export const setUserStatus = (status) => {
     }
 }
 
+export const savePhotoSuccess = (photos) => {
+    return {
+        type: SAVE_PHOTO_SUCCESS,
+        photos
+    }
+}
 
 
 export const getUserProfile = (userId) => {
-    debugger;
-    return (dispatch) => {
-        profileAPI.getProfile(userId)
-            .then(data => {
-                dispatch(setUserProfile(data));
-            });
+    return async (dispatch) => {
+        const data = await profileAPI.getProfile(userId)
+        dispatch(setUserProfile(data));
+
     }
 }
 
 export const getUserStatus = (userId) => {
-    return (dispatch) => {
-        profileAPI.getUserStatus(userId)
-            .then(data => {
-                dispatch(setUserStatus(data));
-            });
+    return async (dispatch) => {
+        const data = await profileAPI.getUserStatus(userId)
+
+        dispatch(setUserStatus(data));
+
     }
 }
 
 export const updateUserStatus = (status) => {
-    return (dispatch) => {
-        profileAPI.updateUserStatus(status)
-            .then(data => {
-                if(data.resultCode === 0) {
-                    dispatch(setUserStatus(status));
-                }
-            });
+    return async (dispatch) => {
+        const data = await profileAPI.updateUserStatus(status)
+
+        if (data.resultCode === 0) {
+            dispatch(setUserStatus(status));
+        }
+    }
+}
+
+export const savePhoto = (file) => {
+    return async (dispatch) => {
+        debugger;
+        const data = await profileAPI.savePhoto(file)
+
+        if (data.resultCode === 0) {
+            dispatch(savePhotoSuccess(data.photos));
+        }
+    }
+}
+
+
+export const saveProfile = (profile) => {
+    return async (dispatch, getState) => {
+        debugger;
+        const userId = getState().auth.userId;
+        const data = await profileAPI.saveProfile(profile)
+
+        if (data.resultCode === 0) {
+            dispatch(getUserProfile(userId));
+        } else {
+            dispatch(stopSubmit('edit-profile', {_error: data.messages[0]}))
+        }
     }
 }
 

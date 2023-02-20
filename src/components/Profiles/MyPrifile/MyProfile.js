@@ -1,33 +1,83 @@
-import React from "react";
+import React, {useState} from "react";
 import classes from "./MyProfile.module.css";
 import Preloader from "../../common/Preloader/Preloader";
-import ProfileStatus from "../ProfileInfo/ProfileInfo";
+import ProfileStatusHook from "../ProfileInfo/ProfileInfoStatusHook";
+import ProfileDataForm, {Contact} from "../ProfileInfo/ProfileDataForm";
 
 
 
+function InfoPerson({saveProfile, savePhoto, profile, status, isOwner, updateUserStatus}) {
 
-function InfoPerson(props){
-    return  <div className={classes.infoBlok}>
-        <div className={classes.inforAva}>
-            <img src={!props.profile.photos.small ? 'https://maxblogs.ru/images/926.jpg' :  props.profile.photos.small} alt="Avotar"/>
+    let [editMode, setEditMode] = useState(false);
+
+    const onSubmit = (formData) => {
+        saveProfile(formData);
+        setEditMode(false);
+    }
+
+    const onMainPhotosSelected = (e) => {
+        if (e.target.files.length) {
+            savePhoto(e.target.files[0])
+        }
+    }
+    return <div className={classes.infoBlock}>
+        <div className={classes.infoAva}>
+            <img src={!profile.photos.small ? 'https://maxblogs.ru/images/926.jpg' : profile.photos.small}
+                 alt="Avotar"/>
         </div>
+        {isOwner && <input type="file" onClick={onMainPhotosSelected}/>}
         <div className={classes.profileContant}>
-            <div>STATUS: <ProfileStatus status={props.status} updateUserStatus={props.updateUserStatus} /></div>
-            <div className={classes.profileInform}>Name: {props.profile.fullName}</div>
-            <div className={classes.profileInform}>Job: {props.profile.lookingForAJobDescription}</div>
-            <div className={classes.profileInform}>Contacts: {props.profile.contacts.github}</div>
-            <div className={classes.profileInform}>About Me: {props.profile.aboutMe}</div>
-            <div className={classes.profileInform}>Age: {!props.age ? 31 : props.age}</div>
+            <div><b>STATUS:</b> <ProfileStatusHook status={status} updateUserStatus={updateUserStatus}/>
+            </div>
+            { editMode
+                ? <ProfileDataForm initialValues={profile} profile={profile} onSubmit={onSubmit}/>
+                : <ProfileData profile={profile} isOwner={isOwner} goToEditMode={() => setEditMode(true)}/> }
         </div>
     </div>
 }
 
+const ProfileData = ({profile, isOwner, goToEditMode}) => {
+
+    return <div>
+        {isOwner && <button onClick={goToEditMode}>Edit</button>}
+            <div>
+                <b>Full name:</b> {profile.fullName}
+            </div>
+            <div>
+                <b>Looking for a job:</b> {profile.lookingForAJob ? 'yes' : 'no'}
+            </div>
+            {
+                profile.lookingForAJob &&
+                <div>
+                    <b>My profile skills:</b> {profile.lookingForAJobDescription}
+                </div>
+            }
+            <div>
+                <b>About Me:</b> {profile.aboutMe}
+            </div>
+            <div>
+                <b>Contacts:</b> {Object.keys(profile.contacts).map(key => {
+                    return <Contact
+                        key={key}
+                        contactTitle={key}
+                        contactValue={profile.contacts[key]}/>
+                }
+            )}
+            </div>
+        </div>
+}
+
 function MyProfile(props) {
-    debugger;
-    if (!props.profile){
+    if (!props.profile) {
         return <Preloader/>
     }
-    return <InfoPerson profile={props.profile} status={props.status} updateUserStatus={props.updateUserStatus}/>
+    return <InfoPerson savePhoto={props.savePhoto}
+                       profile={props.profile}
+                       status={props.status}
+                       updateUserStatus={props.updateUserStatus}
+                       isOwner={props.isOwner}
+                       saveProfile={props.saveProfile}
+    />
 
 }
 

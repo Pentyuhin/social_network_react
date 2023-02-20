@@ -1,7 +1,7 @@
 import React from "react";
 import Profile from "./Profiles";
 import {connect} from "react-redux";
-import {getUserProfile, getUserStatus, updateUserStatus} from "../../redux/profileReducer";
+import {getUserProfile, getUserStatus, savePhoto, saveProfile, updateUserStatus} from "../../redux/profileReducer";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {compose} from "redux";
 // import {withAuthRedirect} from "../../hoc/AuthRedirect"; Не используем в данным момент
@@ -9,7 +9,8 @@ import {compose} from "redux";
 
 
 class ProfilesContainer extends React.Component{
-    componentDidMount() {
+
+    refreshProfile() {
         let userId = this.props.router.params.userId;
         if(!userId){
             userId = this.props.authorizedUserId;
@@ -21,18 +22,32 @@ class ProfilesContainer extends React.Component{
         this.props.getUserStatus(userId);
     }
 
+    componentDidMount() {
+        this.refreshProfile();
+    }
+
     componentDidUpdate(prevProps, prevState) {
+
         if(prevProps.status !== this.props.status){
             this.setState({
                 status: this.props.status
             });
+        }
+
+        if( this.props.router.params.userId !== prevProps.router.params.userId ){
+            this.refreshProfile();
         }
     }
 
 
     render() {
         return (
-            <Profile {...this.props} updateUserStatus={this.props.updateUserStatus}/>
+            <Profile {...this.props}
+                     updateUserStatus={this.props.updateUserStatus}
+                     isOwner={!this.props.router.params.userId}
+                     savePhoto={this.props.savePhoto}
+            />
+
         )
 
     }
@@ -55,13 +70,13 @@ let mapStateToProps = (state) => ({
     profile: state.pageProfile.profile,
     status: state.pageProfile.status,
     authorizedUserId: state.auth.userId,
-    isAuth: state.auth.isAuth
+    isAuth: state.auth.isAuth,
 });
 
 
 export default compose(
     connect(mapStateToProps, {getUserProfile,
-        getUserStatus, updateUserStatus}),
+        getUserStatus, updateUserStatus, savePhoto, saveProfile}),
     // withAuthRedirect, Не используем в данным момент
     withRouter
 )(ProfilesContainer);
